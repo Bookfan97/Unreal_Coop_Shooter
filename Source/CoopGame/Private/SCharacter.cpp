@@ -1,20 +1,21 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "SCharacter.h"
 #include "CoopGame/Public/SCharacter.h"
 #include "Components/InputComponent.h"
+#include "GameFramework/PawnMovementComponent.h"
 //#include "Camera/CameraComponent.h"
 
 // Sets default values
 ASCharacter::ASCharacter()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpingArmComponent"));
 	SpringArmComponent->SetupAttachment(RootComponent);
-	SpringArmComponent->bUsePawnControlRotation=true;
-	CameraComponent=CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
+	SpringArmComponent->bUsePawnControlRotation = true;
+	ACharacter::GetMovementComponent()->GetNavAgentPropertiesRef().bCanCrouch = true;
+	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
 	CameraComponent->SetupAttachment(SpringArmComponent);
 }
 
@@ -22,7 +23,6 @@ ASCharacter::ASCharacter()
 void ASCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 void ASCharacter::MoveForward(float Value)
@@ -32,14 +32,23 @@ void ASCharacter::MoveForward(float Value)
 
 void ASCharacter::MoveRight(float Value)
 {
-	AddMovementInput(GetActorRightVector()*Value);
+	AddMovementInput(GetActorRightVector() * Value);
+}
+
+void ASCharacter::BeginCrouch()
+{
+	Crouch();
+}
+
+void ASCharacter::EndCrouch()
+{
+	UnCrouch();
 }
 
 // Called every frame
 void ASCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 // Called to bind functionality to input
@@ -50,5 +59,7 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAxis("MoveRight", this, &ASCharacter::MoveRight);
 	PlayerInputComponent->BindAxis("LookUp", this, &ASCharacter::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("Turn", this, &ASCharacter::AddControllerYawInput);
+	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &ASCharacter::BeginCrouch);
+	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &ASCharacter::EndCrouch);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ASCharacter::Jump);
 }
-

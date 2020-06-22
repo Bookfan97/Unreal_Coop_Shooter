@@ -25,15 +25,16 @@ protected:
 	virtual void BeginPlay() override;
 	void MoveForward(float Value);
 	void MoveRight(float Value);
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
-	UCameraComponent* CameraComponent;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Components")
-	USpringArmComponent* SpringArmComponent;
-public:	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+		UCameraComponent* CameraComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
+		USpringArmComponent* SpringArmComponent;
+	void BeginCrouch();
+	void EndCrouch();
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
 };
