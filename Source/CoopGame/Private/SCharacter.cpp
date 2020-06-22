@@ -63,3 +63,12 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &ASCharacter::EndCrouch);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ASCharacter::Jump);
 }
+
+FVector ASCharacter::GetPawnViewLocation() const
+{
+	if(CameraComponent)
+	{
+		return CameraComponent->GetComponentLocation();
+	}
+	return Super::GetPawnViewLocation();
+}
