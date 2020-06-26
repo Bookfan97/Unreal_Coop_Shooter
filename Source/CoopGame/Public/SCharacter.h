@@ -6,7 +6,8 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/SpringArmComponent.h"
-
+#define WIN32_LEAN_AND_MEAN
+#include "Windows.h"
 #include "SCharacter.generated.h"
 
 //class UCameraComponent;
@@ -29,8 +30,16 @@ protected:
 		UCameraComponent* CameraComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 		USpringArmComponent* SpringArmComponent;
+	bool bWantToZoom;
+	UPROPERTY(EditDefaultsOnly, Category = "Player")
+		float zoomFOV;
+	UPROPERTY(EditDefaultsOnly, Category = "Player", meta = (ClampMin = 0.1, ClampMax = 100))
+		float ZoomInterpSpeed;
+	float DefaultFOV;
 	void BeginCrouch();
 	void EndCrouch();
+	void BeginZoom();
+	void EndZoom();
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

@@ -2,6 +2,9 @@
 
 #include "SCharacter.h"
 #include "CoopGame/Public/SCharacter.h"
+
+#include <strmif.h>
+
 #include "Components/InputComponent.h"
 #include "GameFramework/PawnMovementComponent.h"
 //#include "Camera/CameraComponent.h"
@@ -17,12 +20,15 @@ ASCharacter::ASCharacter()
 	ACharacter::GetMovementComponent()->GetNavAgentPropertiesRef().bCanCrouch = true;
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
 	CameraComponent->SetupAttachment(SpringArmComponent);
+	zoomFOV = 65.0f;
+	ZoomInterpSpeed = 20;
 }
 
 // Called when the game starts or when spawned
 void ASCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	DefaultFOV = CameraComponent->FieldOfView;
 }
 
 void ASCharacter::MoveForward(float Value)
@@ -45,10 +51,23 @@ void ASCharacter::EndCrouch()
 	UnCrouch();
 }
 
+void ASCharacter::BeginZoom()
+{
+	bWantToZoom = true;
+}
+
+void ASCharacter::EndZoom()
+{
+	bWantToZoom = false;
+}
+
 // Called every frame
 void ASCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	float targetFOV = bWantToZoom ? zoomFOV : DefaultFOV;
+	float newFOV = FMath::FInterpTo(CameraComponent->FieldOfView, targetFOV, DeltaTime, ZoomInterpSpeed);
+	CameraComponent->SetFieldOfView(newFOV);
 }
 
 // Called to bind functionality to input
@@ -62,6 +81,8 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &ASCharacter::BeginCrouch);
 	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &ASCharacter::EndCrouch);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ASCharacter::Jump);
+	PlayerInputComponent->BindAction("Zoom", IE_Pressed, this, &ASCharacter::BeginZoom);
+	PlayerInputComponent->BindAction("Zoom", IE_Released, this, &ASCharacter::EndZoom);
 }
 
 FVector ASCharacter::GetPawnViewLocation() const
