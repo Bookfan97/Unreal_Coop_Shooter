@@ -7,6 +7,7 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/SpringArmComponent.h"
 #define WIN32_LEAN_AND_MEAN
+#include "SWeapon.h"
 #include "Windows.h"
 #include "SCharacter.generated.h"
 
@@ -40,6 +41,13 @@ protected:
 	void EndCrouch();
 	void BeginZoom();
 	void EndZoom();
+	ASWeapon* CurrentWeapon;
+	UPROPERTY(VisibleDefaultsOnly, Category = "Player")
+		FName WeaponAttachSocketName;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Player")
+		TSubclassOf<ASWeapon> StarterWeaponClass;
+	void Fire();
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
