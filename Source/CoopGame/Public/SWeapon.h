@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Camera/CameraShake.h"
 #include "GameFramework/Actor.h"
 #include "SWeapon.generated.h"
 
@@ -37,4 +38,6 @@ protected:
 		UParticleSystem* ImpactEffect;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
 		UParticleSystem* TracerEffect;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+	TSubclassOf<UCameraShake> FireCameraShake;
 };
