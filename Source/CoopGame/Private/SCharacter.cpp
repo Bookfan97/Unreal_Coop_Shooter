@@ -9,6 +9,8 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Engine/World.h"
 #include "SWeapon.h"
+#include "Components/CapsuleComponent.h"
+#include "CoopGame/CoopGame.h"
 #include "GameFramework/PawnMovementComponent.h"
 //#include "Camera/CameraComponent.h"
 
@@ -21,6 +23,7 @@ ASCharacter::ASCharacter()
 	SpringArmComponent->SetupAttachment(RootComponent);
 	SpringArmComponent->bUsePawnControlRotation = true;
 	ACharacter::GetMovementComponent()->GetNavAgentPropertiesRef().bCanCrouch = true;
+	GetCapsuleComponent()->SetCollisionResponseToChannel(COLLISION_WEAPON, ECR_Ignore);
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
 	CameraComponent->SetupAttachment(SpringArmComponent);
 	zoomFOV = 65.0f;
