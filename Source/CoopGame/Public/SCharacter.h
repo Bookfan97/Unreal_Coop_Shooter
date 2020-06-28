@@ -32,7 +32,8 @@ protected:
 		UCameraComponent* CameraComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 		USpringArmComponent* SpringArmComponent;
-	USHealthComponent* HealthComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
+		USHealthComponent* HealthComponent;
 	bool bWantToZoom;
 	UPROPERTY(EditDefaultsOnly, Category = "Player")
 		float zoomFOV;
