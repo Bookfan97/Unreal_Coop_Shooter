@@ -2,6 +2,7 @@
 
 #include "SWeapon.h"
 #include "DrawDebugHelpers.h"
+#include "TimerManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystem.h"
 #include "Components/SkeletalMeshComponent.h"
@@ -12,6 +13,12 @@
 static int32 DebugWeaponDrawing = 0;
 FAutoConsoleVariableRef CVARDebugWeaponDrawing(TEXT("COOP.DebugWeapons"), DebugWeaponDrawing, TEXT("Draw Debug Lines for Weapons"), ECVF_Cheat);
 
+void ASWeapon::BeginPlay()
+{
+	Super::BeginPlay();
+	TimeBetweenShots = 60 / RateOfFire;
+}
+
 // Sets default values
 ASWeapon::ASWeapon()
 {
@@ -20,6 +27,7 @@ ASWeapon::ASWeapon()
 	MuzzleSocketName = "MuzzleSocket";
 	TracerTargetName = "Target";
 	BaseDamage = 20.0f;
+	RateOfFire = 600;
 }
 
 void ASWeapon::Fire()
@@ -77,7 +85,20 @@ void ASWeapon::Fire()
 			DrawDebugLine(GetWorld(), EyeLocation, TraceEnd, FColor::Red, false, 1.0f, 0, 1.0f);
 		}
 		PlayFireEffects(TracerEndPoint);
+		LastFireTime = GetWorld()->TimeSeconds;
 	}
+}
+
+void ASWeapon::StartFire()
+{
+	float FirstDelay = FMath::Max(LastFireTime + TimeBetweenShots - GetWorld()->TimeSeconds, 0.0f);
+	GetWorldTimerManager().SetTimer(TimerHandle_TimeBetweenShots, this, &ASWeapon::Fire, TimeBetweenShots, true, FirstDelay);
+	Fire();
+}
+
+void ASWeapon::StopFire()
+{
+	GetWorldTimerManager().ClearTimer(TimerHandle_TimeBetweenShots);
 }
 
 void ASWeapon::PlayFireEffects(FVector TracerEndPoint)

@@ -47,7 +47,8 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Player")
 		TSubclassOf<ASWeapon> StarterWeaponClass;
-	void Fire();
+	void StartFire();
+	void StopFire();
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
