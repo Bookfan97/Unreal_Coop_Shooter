@@ -24,6 +24,7 @@ ASCharacter::ASCharacter()
 	SpringArmComponent->bUsePawnControlRotation = true;
 	ACharacter::GetMovementComponent()->GetNavAgentPropertiesRef().bCanCrouch = true;
 	GetCapsuleComponent()->SetCollisionResponseToChannel(COLLISION_WEAPON, ECR_Ignore);
+	HealthComponent = CreateDefaultSubobject<USHealthComponent>(TEXT("HealthComponent"));
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
 	CameraComponent->SetupAttachment(SpringArmComponent);
 	zoomFOV = 65.0f;
@@ -46,6 +47,7 @@ void ASCharacter::BeginPlay()
 		CurrentWeapon->SetOwner(this);
 		CurrentWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponAttachSocketName);
 	}
+	HealthComponent->OnHealthChanged.AddDynamic(this, &ASCharacter::OnHealthChanged);
 }
 
 void ASCharacter::MoveForward(float Value)
@@ -91,6 +93,18 @@ void ASCharacter::StopFire()
 	if (CurrentWeapon)
 	{
 		CurrentWeapon->StopFire();
+	}
+}
+
+void ASCharacter::OnHealthChanged(USHealthComponent* OwningHealthComp, float Health, float HealthDelta, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
+{
+	if (Health <= 0 && !isDead)
+	{
+		isDead = true;
+		GetMovementComponent()->StopMovementImmediately();
+		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		DetachFromControllerPendingDestroy();
+		SetLifeSpan(10.0f);
 	}
 }
 
