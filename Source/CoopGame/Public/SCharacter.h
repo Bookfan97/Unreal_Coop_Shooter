@@ -44,7 +44,8 @@ protected:
 	void EndCrouch();
 	void BeginZoom();
 	void EndZoom();
-	ASWeapon* CurrentWeapon;
+	UPROPERTY(Replicated)
+		ASWeapon* CurrentWeapon;
 	UPROPERTY(VisibleDefaultsOnly, Category = "Player")
 		FName WeaponAttachSocketName;
 	UPROPERTY(EditDefaultsOnly, Category = "Player")
@@ -53,8 +54,9 @@ protected:
 	void StopFire();
 	UFUNCTION()
 		void OnHealthChanged(USHealthComponent* OwningHealthComp, float Health, float HealthDelta, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
-	UPROPERTY(BlueprintReadOnly, Category = "Player")
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Player")
 		bool isDead;
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
