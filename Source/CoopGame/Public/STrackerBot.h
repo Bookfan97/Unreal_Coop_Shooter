@@ -7,6 +7,8 @@
 #include "Components/SphereComponent.h"
 #include "GameFramework/Pawn.h"
 #include "Components/StaticMeshComponent.h"
+#include "Sound/SoundCue.h"
+
 #include "STrackerBot.generated.h"
 
 UCLASS()
@@ -28,7 +30,7 @@ protected:
 	UPROPERTY(VisibleDefaultsOnly, Category = "Components")
 		USHealthComponent* HealthComponent;
 	UPROPERTY(VisibleDefaultsOnly, Category = "Components")
-	USphereComponent* SphereComponent;
+		USphereComponent* SphereComponent;
 	UFUNCTION()
 		void HandleTakeDamage(USHealthComponent* OwningHealthComp, float Health, float HealthDelta, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
 	FVector GetNextPathPoint();
@@ -49,6 +51,12 @@ protected:
 		float ExplosionRadius;
 	UPROPERTY(EditDefaultsOnly, Category = "TrackerBot")
 		float ExplosionDamage;
+	UPROPERTY(EditDefaultsOnly, Category = "TrackerBot")
+		float SelfDamageInterval;
 	FTimerHandle TimerHandle_SelfDamage;
 	void DamageSelf();
+	UPROPERTY(EditDefaultsOnly, Category = "TrackerBot")
+		USoundCue* SelfDestructSound;
+	UPROPERTY(EditDefaultsOnly, Category = "TrackerBot")
+		USoundCue* ExplodeSound;
 };
