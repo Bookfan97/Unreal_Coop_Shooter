@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "SPowerupActor.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/Actor.h"
 #include "SPickupActor.generated.h"
@@ -23,4 +24,12 @@ protected:
 		USphereComponent* SphereComponent;
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 		UDecalComponent* DecalComponent;
+	UPROPERTY(EditDefaultsOnly, Category = "PickupActor")
+		TSubclassOf<ASPowerupActor> PowerupClass;
+	UFUNCTION()
+		void Respawn();
+	ASPowerupActor* PowerupInstance;
+	UPROPERTY(EditDefaultsOnly, Category = "PickupActor")
+		float coolDownDuration;
+	FTimerHandle TimerHandle_RespawnTimer;
 };
