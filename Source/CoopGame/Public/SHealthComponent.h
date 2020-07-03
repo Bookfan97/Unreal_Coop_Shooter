@@ -20,12 +20,13 @@ public:
 		FOnHealthChangedSignature OnHealthChanged;
 	UFUNCTION(BlueprintCallable, Category = "Health Component")
 		void Heal(float HealAmount);
+	float GetHealth() const;
 
 protected:
 	// Called when the game starts
-	virtual void BeginPlay() override;
 	UPROPERTY(ReplicatedUsing = OnRep_Health, BlueprintReadOnly, Category = "HealthComponent")
 		float Health;
+	virtual void BeginPlay() override;
 	UFUNCTION()
 		void OnRep_Health(float OldHealth);
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HealthComponent")

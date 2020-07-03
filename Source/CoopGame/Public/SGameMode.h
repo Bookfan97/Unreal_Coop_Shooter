@@ -7,11 +7,30 @@
 #include "SGameMode.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class COOPGAME_API ASGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
-	
+protected:
+	UFUNCTION(BlueprintImplementableEvent, Category = "GameMode")
+		void SpawnNewBot();
+	void SpawnBotTimerElapsed();
+	void StartWave();
+	void EndWave();
+	void NextWavePrep();
+	void CheckWaveState();
+	void CheckPlayerAlive();
+	void GameOver();
+	FTimerHandle TimerHandle_BotSpawner;
+	FTimerHandle TimerHandle_NextWaveStart;
+	int32 NumBotsToSpawn;
+	int32 WaveCount;
+	UPROPERTY(EditDefaultsOnly, Category = "GameMode")
+		float TimeBetweenWaves;
+public:
+	ASGameMode();
+	virtual void StartPlay() override;
+	virtual void Tick(float DeltaSeconds) override;
 };
