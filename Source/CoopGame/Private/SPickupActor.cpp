@@ -15,12 +15,16 @@ ASPickupActor::ASPickupActor()
 	DecalComponent->DecalSize = FVector(64.0f, 75.0f, 75.0f);
 	DecalComponent->SetupAttachment(RootComponent);
 	coolDownDuration = 10.0f;
+	SetReplicates(true);
 }
 
 void ASPickupActor::BeginPlay()
 {
 	Super::BeginPlay();
-	Respawn();
+	if (Role == ROLE_Authority)
+	{
+		Respawn();
+	}
 }
 
 void ASPickupActor::Respawn()
@@ -38,9 +42,9 @@ void ASPickupActor::Respawn()
 void ASPickupActor::NotifyActorBeginOverlap(AActor* OtherActor)
 {
 	Super::NotifyActorBeginOverlap(OtherActor);
-	if (PowerupInstance)
+	if (Role == ROLE_Authority && PowerupInstance)
 	{
-		PowerupInstance->ActivatePowerup();
+		PowerupInstance->ActivatePowerup(OtherActor);
 		PowerupInstance = nullptr;
 		GetWorldTimerManager().SetTimer(TimerHandle_RespawnTimer, this, &ASPickupActor::Respawn, coolDownDuration);
 	}

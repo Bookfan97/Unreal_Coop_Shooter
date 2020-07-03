@@ -15,15 +15,13 @@ public:
 	// Sets default values for this actor's properties
 	ASPowerupActor();
 	UFUNCTION(BlueprintImplementableEvent, Category = "PowerUp")
-		void OnActivated();
+		void OnActivated(AActor* ActivateFor);
 	UFUNCTION(BlueprintImplementableEvent, Category = "PowerUp")
 		void OnExpired();
 	UFUNCTION(BlueprintImplementableEvent, Category = "PowerUp")
 		void OnPowerupTicked();
-	void ActivatePowerup();
+	void ActivatePowerup(AActor* ActivateFor);
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
 	UPROPERTY(EditDefaultsOnly, Category = "PowerUp")
 		float PowerupInterval;
 	UPROPERTY(EditDefaultsOnly, Category = "PowerUp")
@@ -32,4 +30,11 @@ protected:
 	int32 TicksProcessed;
 	UFUNCTION()
 		void OnTickPowerup();
+	UPROPERTY(ReplicatedUsing = OnRep_PowerupActive)
+		bool bIsPowerupActive;
+	UFUNCTION()
+		void OnRep_PowerupActive();
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
+	UFUNCTION(BlueprintImplementableEvent, Category = "Powerups")
+		void OnPowerupStateChanged(bool bNewIsActive);
 };
