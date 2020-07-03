@@ -66,7 +66,7 @@ FVector ASTrackerBot::GetNextPathPoint()
 {
 	AActor* playerPawn = GetWorld()->GetFirstPlayerController()->GetPawn();
 	UNavigationPath* NavigationPath = UNavigationSystemV1::FindPathToActorSynchronously(this, GetActorLocation(), playerPawn);
-	if (NavigationPath->PathPoints.Num() > 1)
+	if (NavigationPath && NavigationPath->PathPoints.Num() > 1)
 	{
 		return NavigationPath->PathPoints[1];
 	}
