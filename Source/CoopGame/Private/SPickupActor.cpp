@@ -14,6 +14,7 @@ ASPickupActor::ASPickupActor()
 	DecalComponent->SetRelativeRotation(FRotator(0, 90, 0));
 	DecalComponent->DecalSize = FVector(64.0f, 75.0f, 75.0f);
 	DecalComponent->SetupAttachment(RootComponent);
+	coolDownDuration = 10.0f;
 }
 
 void ASPickupActor::BeginPlay()

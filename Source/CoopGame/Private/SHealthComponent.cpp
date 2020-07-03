@@ -11,6 +11,16 @@ USHealthComponent::USHealthComponent()
 	SetIsReplicated(true);
 }
 
+void USHealthComponent::Heal(float HealAmount)
+{
+	if (HealAmount <= 0.0f || Health == 0.0f)
+	{
+		return;
+	}
+	Health = FMath::Clamp(Health + HealAmount, 0.0f, defaultHealth);
+	OnHealthChanged.Broadcast(this, Health, HealAmount, nullptr, nullptr, nullptr);
+}
+
 // Called when the game starts
 void USHealthComponent::BeginPlay()
 {

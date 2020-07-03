@@ -18,6 +18,8 @@ public:
 	USHealthComponent();
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 		FOnHealthChangedSignature OnHealthChanged;
+	UFUNCTION(BlueprintCallable, Category = "Health Component")
+		void Heal(float HealAmount);
 
 protected:
 	// Called when the game starts
