@@ -3,12 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "SGameState.h"
 #include "GameFramework/GameModeBase.h"
 #include "SGameMode.generated.h"
 
-/**
- *
- */
+enum class EWaveState : uint8;
+
 UCLASS()
 class COOPGAME_API ASGameMode : public AGameModeBase
 {
@@ -23,6 +23,7 @@ protected:
 	void CheckWaveState();
 	void CheckPlayerAlive();
 	void GameOver();
+	void SetWaveState(EWaveState NewState);
 	FTimerHandle TimerHandle_BotSpawner;
 	FTimerHandle TimerHandle_NextWaveStart;
 	int32 NumBotsToSpawn;

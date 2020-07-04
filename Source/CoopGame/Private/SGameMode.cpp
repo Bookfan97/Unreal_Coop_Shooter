@@ -2,6 +2,7 @@
 
 #include "SGameMode.h"
 
+#include "SGameState.h"
 #include "SHealthComponent.h"
 #include "TimerManager.h"
 #include "Engine/World.h"
@@ -9,6 +10,7 @@
 ASGameMode::ASGameMode()
 {
 	TimeBetweenWaves = 2.0f;
+	GameStateClass = ASGameState::StaticClass();
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.TickInterval = 1.0f;
 }
@@ -41,17 +43,19 @@ void ASGameMode::StartWave()
 	WaveCount++;
 	NumBotsToSpawn = 2 * WaveCount;
 	GetWorldTimerManager().SetTimer(TimerHandle_BotSpawner, this, &ASGameMode::SpawnBotTimerElapsed, 1.0f, true, 0.0f);
+	SetWaveState(EWaveState::WaveInProgress);
 }
 
 void ASGameMode::EndWave()
 {
 	GetWorldTimerManager().ClearTimer(TimerHandle_BotSpawner);
-	//NextWavePrep();
+	SetWaveState(EWaveState::WaitingToComplete);
 }
 
 void ASGameMode::NextWavePrep()
 {
 	GetWorldTimerManager().SetTimer(TimerHandle_NextWaveStart, this, &ASGameMode::StartWave, TimeBetweenWaves, false);
+	SetWaveState(EWaveState::WaitingToStart);
 }
 
 void ASGameMode::CheckWaveState()
@@ -78,20 +82,21 @@ void ASGameMode::CheckWaveState()
 	}
 	if (!bAreBotsAlive)
 	{
+		SetWaveState(EWaveState::WaveComplete);
 		NextWavePrep();
 	}
 }
 
 void ASGameMode::CheckPlayerAlive()
 {
-	for (FConstPlayerControllerIterator It=  GetWorld()->GetPlayerControllerIterator(); It; It++)
+	for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; It++)
 	{
 		APlayerController* PC = It->Get();
-		if(PC && PC->GetPawn())
+		if (PC && PC->GetPawn())
 		{
 			APawn* MyPawn = PC->GetPawn();
 			USHealthComponent* HealthComponent = Cast<USHealthComponent>(MyPawn->GetComponentByClass(USHealthComponent::StaticClass()));
-			if(ensure(HealthComponent) && HealthComponent->GetHealth()>0.0f)
+			if (ensure(HealthComponent) && HealthComponent->GetHealth() > 0.0f)
 			{
 				return;
 			}
@@ -103,5 +108,15 @@ void ASGameMode::CheckPlayerAlive()
 void ASGameMode::GameOver()
 {
 	EndWave();
+	SetWaveState(EWaveState::GameOver);
 	UE_LOG(LogTemp, Log, TEXT("WASTED"));
+}
+
+void ASGameMode::SetWaveState(EWaveState NewState)
+{
+	ASGameState* GS = GetGameState<ASGameState>();
+	if (ensureAlways(GS))
+	{
+		GS->SetWaveState(NewState);
+	}
 }
