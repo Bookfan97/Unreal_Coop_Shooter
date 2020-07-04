@@ -27,6 +27,7 @@ protected:
 	UPROPERTY(ReplicatedUsing = OnRep_Health, BlueprintReadOnly, Category = "HealthComponent")
 		float Health;
 	virtual void BeginPlay() override;
+	bool bIsDead;
 	UFUNCTION()
 		void OnRep_Health(float OldHealth);
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HealthComponent")

@@ -5,10 +5,10 @@
 
 void ASGameState::SetWaveState(EWaveState NewState)
 {
-	if(Role == ROLE_Authority)
+	if (Role == ROLE_Authority)
 	{
 		EWaveState OldState = WaveState;
-		WaveState=NewState;
+		WaveState = NewState;
 		OnRep_WaveState(OldState);
 	}
 }
