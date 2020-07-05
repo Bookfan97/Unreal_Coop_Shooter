@@ -26,6 +26,7 @@ protected:
 	void CheckPlayerAlive();
 	void GameOver();
 	void SetWaveState(EWaveState NewState);
+	void RespawnDeadPlayers();
 	FTimerHandle TimerHandle_BotSpawner;
 	FTimerHandle TimerHandle_NextWaveStart;
 	int32 NumBotsToSpawn;

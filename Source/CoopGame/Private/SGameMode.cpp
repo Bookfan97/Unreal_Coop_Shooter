@@ -122,3 +122,15 @@ void ASGameMode::SetWaveState(EWaveState NewState)
 		GS->SetWaveState(NewState);
 	}
 }
+
+void ASGameMode::RespawnDeadPlayers()
+{
+	for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; It++)
+	{
+		APlayerController* PC = It->Get();
+		if (PC && PC->GetPawn() == nullptr)
+		{
+			RestartPlayer(PC);
+		}
+	}
+}
