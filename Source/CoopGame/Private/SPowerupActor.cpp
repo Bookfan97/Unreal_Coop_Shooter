@@ -1,15 +1,13 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "SPowerupActor.h"
-
-#include "TimerManager.h"
 #include "Net/UnrealNetwork.h"
 
 // Sets default values
 ASPowerupActor::ASPowerupActor()
 {
 	PowerupInterval = 0.0f;
-	TotalNumTicks = 0.0f;
+	TotalNumTicks = 0;
 	bIsPowerupActive = false;
 	SetReplicates(true);
 }
@@ -21,14 +19,13 @@ void ASPowerupActor::ActivatePowerup(AActor* ActivateFor)
 	OnRep_PowerupActive();
 	if (PowerupInterval > 0.0f)
 	{
-		GetWorldTimerManager().SetTimer(TimerHandle_PowerupTick, this, &ASPowerupActor::OnTickPowerup, true, 0.0f);
+		GetWorldTimerManager().SetTimer(TimerHandle_PowerupTick, this, &ASPowerupActor::OnTickPowerup, PowerupInterval, true);
 	}
 	else
 	{
 		OnTickPowerup();
 	}
 }
-
 void ASPowerupActor::OnTickPowerup()
 {
 	TicksProcessed++;
@@ -36,7 +33,7 @@ void ASPowerupActor::OnTickPowerup()
 	if (TicksProcessed >= TotalNumTicks)
 	{
 		OnExpired();
-		bIsPowerupActive = true;
+		bIsPowerupActive = false;
 		OnRep_PowerupActive();
 		GetWorldTimerManager().ClearTimer(TimerHandle_PowerupTick);
 	}

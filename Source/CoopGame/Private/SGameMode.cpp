@@ -1,12 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "SGameMode.h"
-
-#include "SGameState.h"
 #include "SHealthComponent.h"
+#include "SGameState.h"
 #include "SPlayerState.h"
 #include "TimerManager.h"
-#include "Engine/World.h"
 
 ASGameMode::ASGameMode()
 {
@@ -58,6 +56,7 @@ void ASGameMode::NextWavePrep()
 {
 	GetWorldTimerManager().SetTimer(TimerHandle_NextWaveStart, this, &ASGameMode::StartWave, TimeBetweenWaves, false);
 	SetWaveState(EWaveState::WaitingToStart);
+	RespawnDeadPlayers();
 }
 
 void ASGameMode::CheckWaveState()
@@ -68,7 +67,7 @@ void ASGameMode::CheckWaveState()
 		return;
 	}
 	bool bAreBotsAlive = false;
-	for (FConstPawnIterator It = GetWorld()->GetPawnIterator(); It; It++)
+	for (FConstPawnIterator It = GetWorld()->GetPawnIterator(); It; ++It)
 	{
 		APawn* TestPawn = It->Get();
 		if (TestPawn == nullptr || TestPawn->IsPlayerControlled())
@@ -91,7 +90,7 @@ void ASGameMode::CheckWaveState()
 
 void ASGameMode::CheckPlayerAlive()
 {
-	for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; It++)
+	for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
 	{
 		APlayerController* PC = It->Get();
 		if (PC && PC->GetPawn())
@@ -111,7 +110,6 @@ void ASGameMode::GameOver()
 {
 	EndWave();
 	SetWaveState(EWaveState::GameOver);
-	UE_LOG(LogTemp, Log, TEXT("WASTED"));
 }
 
 void ASGameMode::SetWaveState(EWaveState NewState)
@@ -125,7 +123,7 @@ void ASGameMode::SetWaveState(EWaveState NewState)
 
 void ASGameMode::RespawnDeadPlayers()
 {
-	for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; It++)
+	for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
 	{
 		APlayerController* PC = It->Get();
 		if (PC && PC->GetPawn() == nullptr)

@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Camera/CameraShake.h"
 #include "GameFramework/Actor.h"
 #include "SWeapon.generated.h"
 
@@ -32,13 +31,12 @@ public:
 	ASWeapon();
 	void StartFire();
 	void StopFire();
-	void PlayFireEffects(FVector TracerEndPoint);
-	void PlayImpactEffects(EPhysicalSurface SurfaceType, FVector ImpactPoint);
-	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 protected:
-	virtual void BeginPlay();
+	virtual void BeginPlay() override;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 		USkeletalMeshComponent* MeshComponent;
+	void PlayFireEffects(FVector TraceEnd);
+	void PlayImpactEffects(EPhysicalSurface SurfaceType, FVector ImpactPoint);
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
 		TSubclassOf<UDamageType> DamageType;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
@@ -53,11 +51,11 @@ protected:
 		UParticleSystem* FleshImpactEffect;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
 		UParticleSystem* TracerEffect;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 		TSubclassOf<UCameraShake> FireCameraShake;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 		float BaseDamage;
-	virtual void Fire();
+	void Fire();
 	UFUNCTION(Server, Reliable, WithValidation)
 		void ServerFire();
 	FTimerHandle TimerHandle_TimeBetweenShots;
@@ -69,4 +67,6 @@ protected:
 		FHitScanTrace HitScanTrace;
 	UFUNCTION()
 		void OnRep_HitScanTrace();
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon", meta = (ClampMin = 0.0f))
+		float BulletSpread;
 };

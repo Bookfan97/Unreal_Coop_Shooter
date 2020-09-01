@@ -3,10 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SPowerupActor.h"
-#include "Components/SphereComponent.h"
 #include "GameFramework/Actor.h"
 #include "SPickupActor.generated.h"
+
+class USphereComponent;
+class UDecalComponent;
+class ASPowerupActor;
 
 UCLASS()
 class COOPGAME_API ASPickupActor : public AActor
@@ -26,10 +28,9 @@ protected:
 		UDecalComponent* DecalComponent;
 	UPROPERTY(EditInstanceOnly, Category = "PickupActor")
 		TSubclassOf<ASPowerupActor> PowerupClass;
-	UFUNCTION()
-		void Respawn();
+	void Respawn();
 	ASPowerupActor* PowerupInstance;
-	UPROPERTY(EditDefaultsOnly, Category = "PickupActor")
+	UPROPERTY(EditInstanceOnly, Category = "PickupActor")
 		float coolDownDuration;
 	FTimerHandle TimerHandle_RespawnTimer;
 };

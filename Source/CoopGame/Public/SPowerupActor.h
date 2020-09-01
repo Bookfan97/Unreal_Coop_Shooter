@@ -14,17 +14,17 @@ class COOPGAME_API ASPowerupActor : public AActor
 public:
 	// Sets default values for this actor's properties
 	ASPowerupActor();
-	UFUNCTION(BlueprintImplementableEvent, Category = "PowerUp")
-		void OnActivated(AActor* ActivateFor);
-	UFUNCTION(BlueprintImplementableEvent, Category = "PowerUp")
-		void OnExpired();
-	UFUNCTION(BlueprintImplementableEvent, Category = "PowerUp")
+	void ActivatePowerup(AActor* ActiveFor);
+	UFUNCTION(BlueprintImplementableEvent, Category = "Powerups")
+		void OnActivated(AActor* ActiveFor);
+	UFUNCTION(BlueprintImplementableEvent, Category = "Powerups")
 		void OnPowerupTicked();
-	void ActivatePowerup(AActor* ActivateFor);
+	UFUNCTION(BlueprintImplementableEvent, Category = "Powerups")
+		void OnExpired();
 protected:
-	UPROPERTY(EditDefaultsOnly, Category = "PowerUp")
+	UPROPERTY(EditDefaultsOnly, Category = "Powerups")
 		float PowerupInterval;
-	UPROPERTY(EditDefaultsOnly, Category = "PowerUp")
+	UPROPERTY(EditDefaultsOnly, Category = "Powerups")
 		int32 TotalNumTicks;
 	FTimerHandle TimerHandle_PowerupTick;
 	int32 TicksProcessed;
@@ -34,7 +34,6 @@ protected:
 		bool bIsPowerupActive;
 	UFUNCTION()
 		void OnRep_PowerupActive();
-	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 	UFUNCTION(BlueprintImplementableEvent, Category = "Powerups")
 		void OnPowerupStateChanged(bool bNewIsActive);
 };

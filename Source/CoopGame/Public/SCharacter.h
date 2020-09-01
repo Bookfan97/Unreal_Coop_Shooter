@@ -3,16 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Camera/CameraComponent.h"
 #include "GameFramework/Character.h"
-#include "GameFramework/SpringArmComponent.h"
-#define WIN32_LEAN_AND_MEAN
-#include "SHealthComponent.h"
-#include "SWeapon.h"
-#include "Windows.h"
 #include "SCharacter.generated.h"
 
-//class UCameraComponent;
+class UCameraComponent;
+class USpringArmComponent;
+class ASWeapon;
+class USHealthComponent;
 
 UCLASS()
 class COOPGAME_API ASCharacter : public ACharacter
@@ -30,9 +27,9 @@ protected:
 	void MoveRight(float Value);
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 		UCameraComponent* CameraComponent;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 		USpringArmComponent* SpringArmComponent;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 		USHealthComponent* HealthComponent;
 	bool bWantToZoom;
 	UPROPERTY(EditDefaultsOnly, Category = "Player")
@@ -46,23 +43,21 @@ protected:
 	void EndZoom();
 	UPROPERTY(Replicated)
 		ASWeapon* CurrentWeapon;
-	UPROPERTY(VisibleDefaultsOnly, Category = "Player")
-		FName WeaponAttachSocketName;
 	UPROPERTY(EditDefaultsOnly, Category = "Player")
 		TSubclassOf<ASWeapon> StarterWeaponClass;
-	void StartFire();
-	void StopFire();
+	UPROPERTY(VisibleDefaultsOnly, Category = "Player")
+		FName WeaponAttachSocketName;
 	UFUNCTION()
 		void OnHealthChanged(USHealthComponent* OwningHealthComp, float Health, float HealthDelta, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Player")
 		bool isDead;
-	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 public:
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
-	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
 	virtual FVector GetPawnViewLocation() const override;
+	UFUNCTION(BlueprintCallable, Category = "Player")
+		void StartFire();
+	UFUNCTION(BlueprintCallable, Category = "Player")
+		void StopFire();
 };

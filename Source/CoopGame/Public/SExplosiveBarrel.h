@@ -23,10 +23,10 @@ public:
 protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "Components")
-		USHealthComponent* HealthComp;
+		USHealthComponent* HealthComponent;
 
 	UPROPERTY(VisibleAnywhere, Category = "Components")
-		UStaticMeshComponent* MeshComp;
+		UStaticMeshComponent* MeshComponent;
 
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 		URadialForceComponent* RadialForceComp;
@@ -35,7 +35,11 @@ protected:
 		void OnHealthChanged(USHealthComponent* OwningHealthComp, float Health, float HealthDelta, const class UDamageType* DamageType,
 			class AController* InstigatedBy, AActor* DamageCauser);
 
-	bool bExploded;
+	UPROPERTY(ReplicatedUsing = OnRep_Exploded)
+		bool bExploded;
+
+	UFUNCTION()
+		void OnRep_Exploded();
 
 	/* Impulse applied to the barrel mesh when it explodes to boost it up a little */
 	UPROPERTY(EditDefaultsOnly, Category = "FX")

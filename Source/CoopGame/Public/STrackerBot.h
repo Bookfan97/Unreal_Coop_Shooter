@@ -3,13 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SHealthComponent.h"
-#include "Components/SphereComponent.h"
 #include "GameFramework/Pawn.h"
-#include "Components/StaticMeshComponent.h"
-#include "Sound/SoundCue.h"
-
 #include "STrackerBot.generated.h"
+
+class USHealthComponent;
+class USphereComponent;
+class USoundCue;
 
 UCLASS()
 class COOPGAME_API ASTrackerBot : public APawn
@@ -19,7 +18,6 @@ class COOPGAME_API ASTrackerBot : public APawn
 public:
 	// Sets default values for this pawn's properties
 	ASTrackerBot();
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 protected:
@@ -59,4 +57,8 @@ protected:
 		USoundCue* SelfDestructSound;
 	UPROPERTY(EditDefaultsOnly, Category = "TrackerBot")
 		USoundCue* ExplodeSound;
+	void OnCheckNearbyBots();
+	int32 PowerLevel;
+	FTimerHandle TimerHandle_RefreshPath;
+	void RefreshPath();
 };

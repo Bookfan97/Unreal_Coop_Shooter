@@ -1,29 +1,25 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "SCharacter.h"
-#include "CoopGame/Public/SCharacter.h"
-
-#include <strmif.h>
-
-#include "Components/InputComponent.h"
-#include "Components/SkeletalMeshComponent.h"
-#include "Engine/World.h"
-#include "SWeapon.h"
-#include "Components/CapsuleComponent.h"
-#include "CoopGame/CoopGame.h"
+#include "Camera/CameraComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/PawnMovementComponent.h"
+#include "Components/CapsuleComponent.h"
+//#include "CoopGame.h"
+#include "SHealthComponent.h"
+#include "SWeapon.h"
+#include "CoopGame/CoopGame.h"
 #include "Net/UnrealNetwork.h"
-//#include "Camera/CameraComponent.h"
 
 // Sets default values
 ASCharacter::ASCharacter()
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpingArmComponent"));
+	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComponent"));
 	SpringArmComponent->SetupAttachment(RootComponent);
 	SpringArmComponent->bUsePawnControlRotation = true;
-	ACharacter::GetMovementComponent()->GetNavAgentPropertiesRef().bCanCrouch = true;
+	GetMovementComponent()->GetNavAgentPropertiesRef().bCanCrouch = true;
 	GetCapsuleComponent()->SetCollisionResponseToChannel(COLLISION_WEAPON, ECR_Ignore);
 	HealthComponent = CreateDefaultSubobject<USHealthComponent>(TEXT("HealthComponent"));
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
@@ -99,7 +95,7 @@ void ASCharacter::StopFire()
 	}
 }
 
-void ASCharacter::OnHealthChanged(USHealthComponent* OwningHealthComp, float Health, float HealthDelta, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
+void ASCharacter::OnHealthChanged(USHealthComponent* OwningHealthComp, float Health, float HealthDelta, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser)
 {
 	if (Health <= 0.0f && !isDead)
 	{
@@ -130,7 +126,7 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAxis("Turn", this, &ASCharacter::AddControllerYawInput);
 	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &ASCharacter::BeginCrouch);
 	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &ASCharacter::EndCrouch);
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ASCharacter::Jump);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Zoom", IE_Pressed, this, &ASCharacter::BeginZoom);
 	PlayerInputComponent->BindAction("Zoom", IE_Released, this, &ASCharacter::EndZoom);
 	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ASCharacter::StartFire);

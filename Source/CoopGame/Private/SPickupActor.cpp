@@ -4,6 +4,8 @@
 #include "SPowerupActor.h"
 #include "TimerManager.h"
 #include "Components/DecalComponent.h"
+#include "Components/SphereComponent.h"
+
 // Sets default values
 ASPickupActor::ASPickupActor()
 {

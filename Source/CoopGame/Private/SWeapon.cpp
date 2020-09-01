@@ -2,18 +2,22 @@
 
 #include "SWeapon.h"
 #include "DrawDebugHelpers.h"
-#include "SCharacter.h"
-#include "TimerManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystem.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "PhysicalMaterials/PhysicalMaterial.h"
+//#include "CoopGame.h"
+#include "TimerManager.h"
 #include "CoopGame/CoopGame.h"
 #include "Net/UnrealNetwork.h"
 
 static int32 DebugWeaponDrawing = 0;
-FAutoConsoleVariableRef CVARDebugWeaponDrawing(TEXT("COOP.DebugWeapons"), DebugWeaponDrawing, TEXT("Draw Debug Lines for Weapons"), ECVF_Cheat);
+FAutoConsoleVariableRef CVARDebugWeaponDrawing(
+	TEXT("COOP.DebugWeapons"),
+	DebugWeaponDrawing,
+	TEXT("Draw Debug Lines for Weapons"),
+	ECVF_Cheat);
 
 void ASWeapon::BeginPlay()
 {
@@ -29,6 +33,7 @@ ASWeapon::ASWeapon()
 	MuzzleSocketName = "MuzzleSocket";
 	TracerTargetName = "BeamEnd";
 	BaseDamage = 20.0f;
+	BulletSpread = 2.0f;
 	RateOfFire = 600;
 	SetReplicates(true);
 	NetUpdateFrequency = 66.0f;
@@ -48,6 +53,8 @@ void ASWeapon::Fire()
 		FRotator EyeRotation;
 		MyOwner->GetActorEyesViewPoint(EyeLocation, EyeRotation);
 		FVector ShotDirection = EyeRotation.Vector();
+		float HalfRad = FMath::DegreesToRadians(BulletSpread);
+		ShotDirection = FMath::VRandCone(ShotDirection, HalfRad, HalfRad);
 		FVector TraceEnd = EyeLocation + (ShotDirection * 10000);
 		FCollisionQueryParams QueryParams;
 		QueryParams.AddIgnoredActor(MyOwner);
@@ -66,7 +73,7 @@ void ASWeapon::Fire()
 			{
 				ActualDamage *= 4.0f;
 			}
-			UGameplayStatics::ApplyPointDamage(HitActor, ActualDamage, ShotDirection, Hit, MyOwner->GetInstigatorController(), this, DamageType);
+			UGameplayStatics::ApplyPointDamage(HitActor, ActualDamage, ShotDirection, Hit, MyOwner->GetInstigatorController(), MyOwner, DamageType);
 			PlayImpactEffects(SurfaceType, Hit.ImpactPoint);
 			TracerEndPoint = Hit.ImpactPoint;
 		}
@@ -155,10 +162,8 @@ void ASWeapon::PlayImpactEffects(EPhysicalSurface SurfaceType, FVector ImpactPoi
 	if (SelectedEffect)
 	{
 		FVector MuzzleLocation = MeshComponent->GetSocketLocation(MuzzleSocketName);
-
 		FVector ShotDirection = ImpactPoint - MuzzleLocation;
 		ShotDirection.Normalize();
-
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), SelectedEffect, ImpactPoint, ShotDirection.Rotation());
 	}
 }
@@ -166,6 +171,5 @@ void ASWeapon::PlayImpactEffects(EPhysicalSurface SurfaceType, FVector ImpactPoi
 void ASWeapon::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
 	DOREPLIFETIME_CONDITION(ASWeapon, HitScanTrace, COND_SkipOwner);
 }
